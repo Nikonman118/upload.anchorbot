@@ -32,7 +32,18 @@
   </form>
 
 <script>
-    document.getElementById('user').textContent = localStorage.getItem('loggedInUser');
+    const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_AUTH_DOMAIN",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_STORAGE_BUCKET",
+        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+        appId: "YOUR_APP_ID"
+    };
+
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const storage = firebase.storage();
 
     function uploadImage() {
         const fileInput = document.getElementById('imageFile');
@@ -43,23 +54,28 @@
             return;
         }
 
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const url = e.target.result;
+        const storageRef = storage.ref();
+        const imageRef = storageRef.child('uploads/' + file.name);
 
-            // Ask user to read and confirm the rules
-            const rulesAccepted = confirm("Please read the rules:\n1. No offensive content.\n2. Respect copyrights.\nDo you accept?");
-            if (rulesAccepted) {
-                // Save the image to the local storage
-                const images = JSON.parse(localStorage.getItem('uploadedImages')) || [];
-                images.push({ url: url, name: file.name });
-                localStorage.setItem('uploadedImages', JSON.stringify(images));
-
-                window.location.href = "home.html";
-            }
-        };
-        reader.readAsDataURL(file);
+        // Upload the file to Firebase Storage
+        imageRef.put(file).then(snapshot => {
+            // Get the public URL of the uploaded file
+            imageRef.getDownloadURL().then(url => {
+                // Display the shareable link
+                const shareableLink = `https://upload.anchorbot.xyz/u/${file.name}`;
+                alert(`Image uploaded! Shareable link: ${shareableLink}`);
+                // Optionally, display the link on the page
+                const linkElement = document.createElement('a');
+                linkElement.href = shareableLink;
+                linkElement.textContent = shareableLink;
+                document.body.appendChild(linkElement);
+            });
+        }).catch(error => {
+            console.error("Upload failed:", error);
+            alert("Failed to upload image.");
+        });
     }
+
 
     function logout() {
         localStorage.removeItem('loggedInUser');
