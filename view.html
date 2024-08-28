@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Image</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; text-align: center; }
+        img { max-width: 100%; height: auto; border: 1px solid #ddd; margin-top: 20px; }
+        nav { display: flex; justify-content: space-between; padding: 10px; background-color: #333; color: white; }
+        nav a { color: white; text-decoration: none; margin: 0 10px; }
+    </style>
+</head>
+<body>
+
+<nav>
+    <a href="home.html">Back to Home</a>
+    <div>
+        <a href="upload.html">Upload</a>
+        <a href="#" onclick="logout()">Logout</a>
+    </div>
+</nav>
+
+<h2>Viewing Image</h2>
+<img id="viewedImage" src="" alt="Image">
+
+<script>
+    // Function to get query parameters
+    function getQueryParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+    }
+
+    // Get the image URL from the query parameters
+    const imageUrl = getQueryParam('image');
+
+    if (imageUrl) {
+        // Display the image
+        document.getElementById('viewedImage').src = decodeURIComponent(imageUrl);
+    } else {
+        alert("No image found.");
+        window.location.href = "home.html";  // Redirect back if no image found
+    }
+
+    function logout() {
+        localStorage.removeItem('loggedInUser');
+        window.location.href = "index.html";
+    }
+</script>
+
+</body>
+</html>
