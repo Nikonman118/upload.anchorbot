@@ -67,9 +67,11 @@
             });
         }
             
-        function viewImage(url) {
-            window.location.href = url;
-        }
+function viewImage(url) {
+    // Redirect to view.html with the image URL as a query parameter
+    window.location.href = `view.html?image=${encodeURIComponent(url)}`;
+}
+
 
         function logout() {
             localStorage.removeItem('loggedInUser');
