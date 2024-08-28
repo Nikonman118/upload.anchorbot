@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Image</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; }
+        nav { display: flex; justify-content: space-between; padding: 10px; background-color: #333; color: white; }
+        nav a { color: white; text-decoration: none; margin: 0 10px; }
+        input[type="file"] { margin: 20px 0; }
+        button { padding: 10px; background-color: #5cb85c; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background-color: #4cae4c; }
+    </style>
+</head>
+<body>
+
+<nav>
+    <span>Logged in as <span id="user"></span></span>
+    <div>
+        <a href="home.html">Home</a>
+        <a href="#" onclick="logout()">Logout</a>
+    </div>
+</nav>
+
+<h2>Upload Image</h2>
+<form id="uploadForm">
+    <label for="imageFile">Select an image:</label>
+    <input type="file" id="imageFile" accept="image/*">
+    <button type="button" onclick="uploadImage()">Upload</button>
+  </form>
+
+<script>
+    document.getElementById('user').textContent = localStorage.getItem('loggedInUser');
+
+    function uploadImage() {
+        const fileInput = document.getElementById('imageFile');
+        const file = fileInput.files[0];
+
+        if (!file || !file.type.startsWith('image/')) {
+            alert("Please select a valid image file.");
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const url = e.target.result;
+
+            // Ask user to read and confirm the rules
+            const rulesAccepted = confirm("Please read the rules:\n1. No offensive content.\n2. Respect copyrights.\nDo you accept?");
+            if (rulesAccepted) {
+                // Save the image to the local storage
+                const images = JSON.parse(localStorage.getItem('uploadedImages')) || [];
+                images.push({ url: url, name: file.name });
+                localStorage.setItem('uploadedImages', JSON.stringify(images));
+
+                window.location.href = "home.html";
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function logout() {
+        localStorage.removeItem('loggedInUser');
+        window.location.href = "login.html";
+    }
+</script>
+
+</body>
+</html>
